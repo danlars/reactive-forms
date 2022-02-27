@@ -1,0 +1,1 @@
+export type formValueType = Array<any> | string | boolean | number | null | undefined;
