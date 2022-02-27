@@ -5,7 +5,9 @@ Helps separate validation logic from the rest of your application logic.
 
 ## Install
 
-~TBD~
+```bash
+$ npm i ts-reactive-forms
+```
 
 ## Examples
 
