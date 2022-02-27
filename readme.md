@@ -22,5 +22,5 @@ $ npm start
 ```
 
 ## License
-ISC © [danlars](https://github.com/danlars)
+MIT © [danlars](https://github.com/danlars)
 
