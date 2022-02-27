@@ -1,6 +1,6 @@
 {
   "name": "ts-reactive-forms",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "types": "./dist/types.d.ts",
   "main": "dist/main.js",
