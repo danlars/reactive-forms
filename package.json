@@ -1,9 +1,10 @@
 {
   "name": "reactive-forms-js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "types": "./dist/types.d.ts",
   "main": "dist/main.js",
   "module": "dist/module.js",
+  "legacy": "dist/legacy.js",
   "scripts": {
     "start": "npx parcel serve index.html",
     "test": "jest",

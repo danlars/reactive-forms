@@ -12,7 +12,7 @@ $ npm i reactive-forms-js
 ## Usage 
 
 ```javascript
-import { FormControl, FormGroup, requiredValidator } from "reactive-forms";
+import { FormControl, FormGroup, requiredValidator } from "reactive-forms-js";
 
 const formControl = new FormControl('Hello', {
     validators: {
