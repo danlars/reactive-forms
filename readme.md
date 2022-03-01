@@ -6,7 +6,7 @@ Helps separate validation logic from the rest of your application logic.
 ## Install
 
 ```bash
-$ npm i reactive-forms
+$ npm i reactive-forms-js
 ```
 
 ## Usage 
