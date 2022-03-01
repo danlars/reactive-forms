@@ -6,21 +6,43 @@ Helps separate validation logic from the rest of your application logic.
 ## Install
 
 ```bash
-$ npm i ts-reactive-forms
+$ npm i reactive-forms
 ```
-
-## Examples
-
-~TBD~
 
 ## Usage 
 
-~TBD~
+```javascript
+import { FormControl, FormGroup, requiredValidator } from "reactive-forms";
+
+const formControl = new FormControl('Hello', {
+    validators: {
+        requiredValidator,
+    }
+});
+
+const formGroup = new FormGroup({
+    controls: {
+        formControl,
+    }
+});
+
+console.log(formGroup.valid); // True
+console.log(formControl.valid); // True
+formControl.value = '';
+console.log(formGroup.valid); // False
+console.log(formControl.valid); // False
+```
 
 ## Development
 
 ```bash
 $ npm start
+```
+
+## Testing
+
+```bash
+$ npm run test
 ```
 
 ## License

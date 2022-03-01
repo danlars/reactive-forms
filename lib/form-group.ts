@@ -50,14 +50,13 @@ export class FormGroup implements FormGroupInterface {
     }
 
     private getProxyControl(control: FormControlInterface) {
-        const vm = this;
         return new Proxy(control, {
-            set(control: any, prop: string, value: any) {
+            set: (control: any, prop: string, value: any) => {
                 control[prop] = value;
                 if (prop !== 'value') {
                     return true;
                 }
-                vm.runValidations();
+                this.runValidations();
                 return true;
             },
         });
