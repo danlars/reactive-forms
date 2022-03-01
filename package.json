@@ -1,6 +1,6 @@
 {
-  "name": "reactive-forms",
-  "version": "0.0.3",
+  "name": "reactive-forms-js",
+  "version": "0.0.1",
   "types": "./dist/types.d.ts",
   "main": "dist/main.js",
   "module": "dist/module.js",

@@ -1,6 +1,6 @@
 # Reactive Forms
 
-A reactive form library, built in vanilla Javascript. 
+A reactive forms library, built in vanilla Javascript. 
 Helps separate validation logic from the rest of your application logic.
 
 ## Install
