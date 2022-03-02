@@ -1,8 +1,8 @@
-import { FormControlInterface } from "./interfaces/form-control.interface";
-import { FormGroupControlsInterface } from "./interfaces/form-group-controls.interface";
-import { FormGroupOptionsInterface } from "./interfaces/form-group-options.interface";
-import { FormGroupValidationErrorsInterface } from "./interfaces/form-group-validation-errors.interface";
-import { FormGroupInterface } from "./interfaces/form-group.interface";
+import {FormControlInterface} from "./interfaces/form-control.interface";
+import {FormGroupControlsInterface} from "./interfaces/form-group-controls.interface";
+import {FormGroupOptionsInterface} from "./interfaces/form-group-options.interface";
+import {FormGroupValidationErrorsInterface} from "./interfaces/form-group-validation-errors.interface";
+import {FormGroupInterface} from "./interfaces/form-group.interface";
 
 export class FormGroup implements FormGroupInterface {
     private _errors: FormGroupValidationErrorsInterface = {};
@@ -29,9 +29,9 @@ export class FormGroup implements FormGroupInterface {
             this.addControls(options.controls);
         }
     }
-    
+
     addControl(name: string, control: FormControlInterface) {
-        this.controls[name] = this.getProxyControl(control);
+        this.controls[name] = this.getProxyControl(name, control);
         this.controlKeyNames = Object.keys(this.controls);
         this.runControlValidation(name);
     }
@@ -49,13 +49,20 @@ export class FormGroup implements FormGroupInterface {
         }
     }
 
-    private getProxyControl(control: FormControlInterface) {
+    private getProxyControl(name: string, control: FormControlInterface) {
+        if (Array.isArray(control.value)) {
+            control.value = this.getProxyControlArray(name, control.value);
+        }
         return new Proxy(control, {
             set: (control: any, prop: string, value: any) => {
                 control[prop] = value;
                 if (prop !== 'value') {
                     return true;
                 }
+                if (Array.isArray(value)) {
+                    control[prop] = this.getProxyControlArray(name, value);
+                }
+                this.runControlValidation(name);
                 this.runValidations();
                 return true;
             },
@@ -67,16 +74,37 @@ export class FormGroup implements FormGroupInterface {
         this._invalid = false;
         this._errors = {};
         for (const controlKeyName of this.controlKeyNames) {
-            this.runControlValidation(controlKeyName);
+            this.validateControl(controlKeyName);
         }
     }
 
     private runControlValidation(name: string) {
+        const control = this.controls[name];
+        control.runValidations();
+        this._errors[name] = control.errors || {};
+        if (control.invalid) {
+            this._valid = false;
+            this._invalid = true;
+        }
+    }
+
+    private validateControl(name: string) {
         const control = this.controls[name];
         this._errors[name] = control.errors || {};
         if (control.invalid) {
             this._valid = false;
             this._invalid = true;
         }
+    }
+
+    private getProxyControlArray(name: string, value: any) {
+        return new Proxy(value, {
+            set: (obj: any, prop: string, value: any) => {
+                obj[prop] = value;
+                this.runControlValidation(name);
+                this.runValidations();
+                return true;
+            }
+        })
     }
 }

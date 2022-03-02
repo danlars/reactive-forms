@@ -1,7 +1,4 @@
-import { FormControl } from "../lib/form-control";
-import { FormGroup } from "../lib/form-group";
-import { emailValidator } from "../lib/validators/email-validator";
-import { requiredValidator } from "../lib/validators/required-validator";
+import { FormGroup, FormControl, requiredValidator, emailValidator } from "../lib";
 
 const firstNameInput = document.querySelector('#firstName') as HTMLInputElement;
 const firstNameRequiredElement = document.querySelector('#firstNameRequiredElement') as HTMLInputElement;
@@ -12,23 +9,21 @@ const emailValidationElement = document.querySelector('#emailValidationElement')
 const hobbiesSelect = document.querySelector('#hobbies') as HTMLSelectElement;
 const hobbiesRequiredElement = document.querySelector('#hobbiesRequiredElement') as HTMLInputElement;
 
-const lastNameFormControl = new FormControl('');
-const emailFormControl = new FormControl('', {
-    validators: {requiredValidator, emailValidator},
-});
-const hobbiesFormControl = new FormControl([], {
-    validators: {requiredValidator},
-});
 const formGroup = new FormGroup({
     controls: {
         firstName: new FormControl('', {
             validators: {requiredValidator}
         }),
-        lastName: lastNameFormControl,
-        email: emailFormControl,
-        hobbies: hobbiesFormControl,
+        lastName: new FormControl(''),
+        email: new FormControl('', {
+            validators: {requiredValidator, emailValidator},
+        }),
+        hobbies: new FormControl([], {
+            validators: {requiredValidator},
+        }),
     }
 });
+const controls = formGroup.controls;
 const showInvalidElement = (element: HTMLElement, isInvalid = false) => {
     if (isInvalid) {
         element.classList.remove('d-none');
@@ -41,35 +36,37 @@ const showInvalidElement = (element: HTMLElement, isInvalid = false) => {
 
 firstNameInput!.addEventListener('input', (event: Event) => {
     const element = event.target as HTMLInputElement;
-    formGroup.controls.firstName.value = element.value;
+    controls.firstName.value = element.value;
     showInvalidElement(firstNameRequiredElement, formGroup.controls.firstName.errors?.requiredValidator);
     console.log('formGroup', formGroup.valid, formGroup.errors);
 });
 
 lastNameInput!.addEventListener('input', (event: Event) => {
     const element = event.target as HTMLInputElement;
-    lastNameFormControl.value = element.value;
+    controls.lastName.value = element.value;
     console.log('formGroup', formGroup.valid, formGroup.errors);
 });
 
 emailInput!.addEventListener('input', (event: Event) => {
     const element = event.target as HTMLInputElement;
-    emailFormControl.value = element.value;
+    controls.email.value = element.value;
 
-    showInvalidElement(emailRequiredElement, emailFormControl.errors?.requiredValidator);
-    showInvalidElement(emailValidationElement, emailFormControl.errors?.emailValidator);
+    showInvalidElement(emailRequiredElement, formGroup.controls.email.errors?.requiredValidator);
+    showInvalidElement(emailValidationElement, formGroup.controls.email.errors?.emailValidator);
     console.log('formGroup', formGroup.valid, formGroup.errors);
 });
 
 hobbiesSelect!.addEventListener('input', (event: Event) => {
     const element = event.target as HTMLSelectElement;
     const selectedOptions = [];
-    hobbiesFormControl.value.splice(0, hobbiesFormControl.value.length);
+    controls.hobbies.value.splice(0, 1);
+    // controls.hobbies.value = [];
     for (const option of element.options) {
         if (option.selected) {
             selectedOptions.push(option.value);
         }
     }
-    hobbiesFormControl.value.push(...selectedOptions);
-    showInvalidElement(hobbiesRequiredElement, hobbiesFormControl.errors?.requiredValidator);
+    controls.hobbies.value.push(...selectedOptions);
+    console.log('formGroup', formGroup.valid, formGroup.errors);
+    showInvalidElement(hobbiesRequiredElement, formGroup.errors.hobbies.requiredValidator);
 });

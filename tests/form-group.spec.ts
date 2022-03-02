@@ -28,7 +28,7 @@ describe("FormGroup", () => {
     let formControl: FormControl;
 
     beforeEach(() => {
-      formControl = new FormControl("", { 
+      formControl = new FormControl([], {
         validators: {
           requiredValidator,
           emailValidator,
@@ -42,13 +42,13 @@ describe("FormGroup", () => {
     });
 
     test("has Errors from formControl", () => {
-      formGroup.controls.firstName.value = '';
+      formGroup.controls.firstName.value = [];
       expect(formGroup.errors.firstName).toEqual(formControl.errors);
     });
 
     test("Aligns with errors in form control when one validation errors disappears", () => {
-      formGroup.controls.firstName.value = '';
-      formGroup.controls.firstName.value = ' ';
+      formGroup.controls.firstName.value = [];
+      formGroup.controls.firstName.value.push('');
       expect('requiredValidator' in formGroup.errors.firstName).toBe(false);
     });
   });
