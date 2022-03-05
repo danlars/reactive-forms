@@ -5,8 +5,8 @@ export interface FormControlInterface {
     errors: ValidationErrorsInterface | null;
     invalid: boolean;
     value: any;
-    disableFormControl: () => void,
-    enableFormControl: () => void,
+    disable: () => void,
+    enable: () => void,
     runValidations: () => void,
     release: () => void;
 }

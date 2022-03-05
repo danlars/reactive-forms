@@ -66,14 +66,14 @@ describe("FormControl", () => {
 
     test("Invalid input becomes valid when disabling formcontrol", () => {
       formControl.value = '';
-      formControl.disableFormControl();
+      formControl.disable();
       expect(formControl.valid).toBe(true);
     });
 
     test("Invalid input becomes invalid again when enabling after disabling", () => {
       formControl.value = '';
-      formControl.disableFormControl();
-      formControl.enableFormControl();
+      formControl.disable();
+      formControl.enable();
       expect(formControl.invalid).toBe(true);
     });
   });

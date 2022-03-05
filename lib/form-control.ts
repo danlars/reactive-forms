@@ -66,11 +66,11 @@ export class FormControl implements FormControlInterface {
     this.setValue(value);
   }
 
-  disableFormControl() {
+  disable() {
     this.isDisabled = true;
   }
 
-  enableFormControl() {
+  enable() {
     this.isDisabled = false;
   }
 
