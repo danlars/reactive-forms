@@ -7,4 +7,5 @@ export interface FormGroupInterface {
     controls: FormGroupControlsInterface,
     addControl: (name: string, control: FormControlInterface) => void;
     removeControl: (name: string) => void;
+    release: () => void;
 }

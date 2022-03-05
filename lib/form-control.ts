@@ -2,32 +2,34 @@ import { FormControlInterface } from "./interfaces/form-control.interface";
 import { ValidatorFunctionsInterface } from "./interfaces/validator-functions.interface";
 import { ValidationErrorsInterface } from "./interfaces/validation-errors.interface";
 import { formValueType } from "./types/form-value.type";
+import {addWatcher, removeWatcher} from './utils/proxy-listener';
 
 export class FormControl implements FormControlInterface {
   private _valid = true;
   private _invalid = false;
   private _value: formValueType;
   private _errors: null | ValidationErrorsInterface = null;
+  private _released = false;
   private validatorKeys: Array<string> = [];
   private options: { validators?: ValidatorFunctionsInterface } = {};
   private isDisabled = false;
 
   get errors() {
-    if (this.isDisabled) {
+    if (this.isDisabled || this._released) {
       return null;
     }
     return this._errors;
   }
 
   get invalid() {
-    if (this.isDisabled) {
+    if (this.isDisabled || this._released) {
       return false;
     }
     return this._invalid;
   }
 
   get valid() {
-    if (this.isDisabled) {
+    if (this.isDisabled || this._released) {
       return true;
     }
     return this._valid;
@@ -37,8 +39,12 @@ export class FormControl implements FormControlInterface {
     return this._value;
   }
   set value(value: formValueType) {
-    this.setValue(value);
-    this.runValidations();
+    if (this._released) {
+      this._value = value;
+    } else {
+      this.setValue(value);
+      this.runValidations();
+    }
   }
 
   constructor(
@@ -46,8 +52,8 @@ export class FormControl implements FormControlInterface {
     options: { validators?: ValidatorFunctionsInterface } = {}
   ) {
     if (
-        !Array.isArray(value) && 
-        typeof value === "object" && 
+        !Array.isArray(value) &&
+        typeof value === "object" &&
         value != null
     ) {
       throw new Error("FormControl does not support objects");
@@ -70,6 +76,11 @@ export class FormControl implements FormControlInterface {
 
   runValidations() {
     this.runValidators(this.value);
+  }
+
+  release() {
+    removeWatcher(this.value, this.runValidationFromProxy);
+    this._released = true;
   }
 
   runValidators(value: formValueType) {
@@ -97,28 +108,14 @@ export class FormControl implements FormControlInterface {
   private setValue(value: formValueType) {
     let tmpValue = value;
     // @ts-ignore
-    if (Array.isArray(value) && value.__isMyProxy !== true) {
-      tmpValue = this.getProxyArray(value);
+    if (Array.isArray(value)) {
+      tmpValue = addWatcher(value, this.runValidationFromProxy);
     }
 
     this._value = tmpValue;
   }
 
-  private getProxyArray(value: Array<any>) {
-    const vm = this;
-    return new Proxy(value, {
-      get(target: Array<any>, prop: any) {
-        if (prop === "__isMyProxy") {
-          return true;
-        }
-
-        return target[prop];
-      },
-      set(ar: any[], prop: any, value: any) {
-        ar[prop] = value;
-        vm.runValidations();
-        return true;
-      },
-    });
+  private runValidationFromProxy = () => {
+    this.runValidations();
   }
 }

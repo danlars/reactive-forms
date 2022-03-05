@@ -8,4 +8,5 @@ export interface FormControlInterface {
     disableFormControl: () => void,
     enableFormControl: () => void,
     runValidations: () => void,
+    release: () => void;
 }

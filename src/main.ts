@@ -1,4 +1,4 @@
-import { FormGroup, FormControl, requiredValidator, emailValidator } from "../lib";
+import { FormGroup, FormControl, isEmptyValidator, emailValidator } from "../lib";
 
 const firstNameInput = document.querySelector('#firstName') as HTMLInputElement;
 const firstNameRequiredElement = document.querySelector('#firstNameRequiredElement') as HTMLInputElement;
@@ -12,14 +12,14 @@ const hobbiesRequiredElement = document.querySelector('#hobbiesRequiredElement')
 const formGroup = new FormGroup({
     controls: {
         firstName: new FormControl('', {
-            validators: {requiredValidator}
+            validators: {requiredValidator: isEmptyValidator}
         }),
         lastName: new FormControl(''),
         email: new FormControl('', {
-            validators: {requiredValidator, emailValidator},
+            validators: {requiredValidator: isEmptyValidator, emailValidator},
         }),
         hobbies: new FormControl([], {
-            validators: {requiredValidator},
+            validators: {requiredValidator: isEmptyValidator},
         }),
     }
 });
@@ -59,8 +59,8 @@ emailInput!.addEventListener('input', (event: Event) => {
 hobbiesSelect!.addEventListener('input', (event: Event) => {
     const element = event.target as HTMLSelectElement;
     const selectedOptions = [];
-    controls.hobbies.value.splice(0, 1);
     // controls.hobbies.value = [];
+    controls.hobbies.value.splice(0, controls.hobbies.value.length);
     for (const option of element.options) {
         if (option.selected) {
             selectedOptions.push(option.value);

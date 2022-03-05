@@ -1,6 +1,6 @@
 import { FormControl } from "../lib/form-control";
 import { validatorFunctionType } from "../lib/types/validator-function.type";
-import { requiredValidator } from "../lib/validators/required-validator";
+import { isEmptyValidator } from "../lib/validators/is-empty-validator";
 
 const emptyStringValidator: validatorFunctionType = (value) => {
   const str = value as string;
@@ -13,6 +13,10 @@ describe("FormControl", () => {
 
     beforeEach(() => {
       formControl = new FormControl("");
+    });
+
+    afterEach(() => {
+      formControl.release();
     });
 
     test("Has default value", () => {
@@ -33,8 +37,12 @@ describe("FormControl", () => {
 
     beforeEach(() => {
       formControl = new FormControl("", {
-        validators: { requiredValidator },
+        validators: { requiredValidator: isEmptyValidator },
       });
+    });
+
+    afterEach(() => {
+      formControl.release();
     });
 
     test("Has default value", () => {
@@ -79,6 +87,10 @@ describe("FormControl", () => {
       });
     });
 
+    afterEach(() => {
+      formControl.release();
+    });
+
     test("Has empty string value", () => {
       expect(formControl.value).toBe("");
     });
@@ -86,6 +98,32 @@ describe("FormControl", () => {
     test("Has empty string error", () => {
       formControl.value = ' ';
       expect(formControl.errors!.emptyStringValidator).toBe(true);
+    });
+  });
+
+  describe("Released state", () => {
+    let formControl: FormControl;
+
+    beforeEach(() => {
+      formControl = new FormControl("", {
+        validators: { emptyStringValidator },
+      });
+      formControl.release();
+    });
+
+    test("has valid true, even if value doesn't comply with validators", () => {
+      formControl.value = '';
+      expect(formControl.valid).toBe(true);
+    });
+
+    test("has invalid false, even if value doesn't comply with validators", () => {
+      formControl.value = '';
+      expect(formControl.invalid).toBe(false);
+    });
+
+    test("Has no errors even though value is invalid", () => {
+      formControl.value = '';
+      expect(formControl.errors).toBe(null);
     });
   });
 });

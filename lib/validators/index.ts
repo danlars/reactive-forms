@@ -1,2 +1,2 @@
-export * from './required-validator';
+export * from './is-empty-validator';
 export * from './email-validator';
